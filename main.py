@@ -6,6 +6,7 @@ from config import Config
 from celery import Celery
 from datetime import timedelta
 
+import os
 
 cors = CORS()
 migrate = Migrate()
@@ -31,8 +32,8 @@ def create_app():
     bcrypt.init_app(app)
     cors.init_app(app)
     migrate.init_app(app, db)
-    app.config['JWT_SECRET_KEY'] = 'secretKeyPeople'
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+    app.config['JWT_SECRET_KEY'] = os.environ.get("JWT_SECRET_KEY")
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = os.environ.get("JWT_ACCESS_TOKEN_EXPIRES")
     jwt.init_app(app)
     api = Api(app, errors=errors)
     api.add_resource(users.Registration, '/api/register')

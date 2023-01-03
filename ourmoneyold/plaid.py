@@ -1,11 +1,12 @@
 from plaid import Client
 from datetime import datetime, timedelta
+import os
 
 
 class Plaid(object):
     def __init__(self):
-        self.client = Client(client_id='5e65448edf1def0011a4e73c', secret='e66361791d54659f54b13ef24ef9ac',
-                             environment='sandbox')
+        self.client = Client(client_id=os.environ.get("CLIENT_ID"), secret=os.environ.get("CLIENT_SECRET"),
+                             environment=os.environ.get("ENVIRONMENT"))
 
     def get_token_and_item_id(self, public_token):
         response = self.client.Item.public_token.exchange(public_token)
