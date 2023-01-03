@@ -1,7 +1,6 @@
-from src import create_app, init_celery
-from flask_migrate import MigrateCommand, Migrate
+from main import create_app, init_celery
 from flask_script import Manager
-from src.models import db
+from models import db
 
 app = create_app()
 celery = init_celery(app)
@@ -9,8 +8,7 @@ app.app_context().push()
 
 
 manager = Manager(app)
-migrate = Migrate(app, db)
-manager.add_command('db', MigrateCommand)
+#manager.add_command('db', MigrateCommand)
 
 
 @manager.command

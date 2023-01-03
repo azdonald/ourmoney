@@ -1,9 +1,10 @@
 from flask import Flask
 from flask_restful import Api
-from src.controllers import *
+from ourmoneyold.controllers import *
 from flask_cors import CORS
-from src.config import Config
+from ourmoneyold.config import Config
 from celery import Celery
+from datetime import timedelta
 
 
 cors = CORS()
@@ -22,23 +23,27 @@ errors = {
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    from src.models import db, bcrypt
-    from src.token import jwt
+    from ourmoneyold.models import db, bcrypt
+    from ourmoneyold.token import jwt
     db.init_app(app)
     bcrypt.init_app(app)
     cors.init_app(app)
     app.config['JWT_SECRET_KEY'] = 'secretKeyPeople'
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
     jwt.init_app(app)
     api = Api(app, errors=errors)
     api.add_resource(UserRegistration, '/api/register')
     api.add_resource(UserLogin, '/api/login')
     api.add_resource(Transactions, '/api/transactions')
     api.add_resource(Accounts, '/api/accounts')
+    api.add_resource(Search, '/api/transactions/search')
+    api.add_resource(UserPasswordChange, '/api/password/change')
+    api.add_resource(Home, '/')
     return app
 
 
 def init_celery(application):
-    from src.task import celery
+    from ourmoneyold.task import celery
     celery.conf.broker_url = application.config['CELERY_BROKER_URL']
     celery.conf.result_backend = application.config['CELERY_BACKEND_RESULT']
     celery.conf.update(application.config)

@@ -7,3 +7,11 @@ class DuplicateUserException(HTTPException):
 
 class InvalidUserException(HTTPException):
     pass
+
+
+class NoAccessTokenException(HTTPException):
+    pass
+
+
+class InvalidPlaidItemException(HTTPException):
+    pass
